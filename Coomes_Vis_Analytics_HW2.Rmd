@@ -1,0 +1,203 @@
+---
+title: "Group project"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r installing_packages, echo=FALSE}
+install.packages("foreign")
+library(foreign)
+install.packages("haven")
+library(haven)
+
+```
+
+```{r adding_data, echo=FALSE}
+
+link="https://github.com/quinhasf/pubpol-599/raw/master/ape_analysis.dta"
+chw_fp <- read_dta(url(link))
+
+```
+
+
+```{r installing_ggplot, echo=FALSE}
+library(ggplot2)
+```
+
+
+```{r create_table, echo=FALSE}
+#look at data
+str(chw_fp)
+names(chw_fp)
+
+chw_fp
+
+#Get only the data that we need
+toplot <- chw_fp[,c('province','ape_contrib')]
+toplot
+
+```
+
+
+```{r getbase_plot, echo=FALSE}
+base= ggplot(data = chw_fp, 
+            aes(x = province,
+                y = ape_contrib)) 
+
+```
+
+
+```{r}
+plot1 = base + geom_bar(fill ="gray",
+                        stat = 'identity') # y is just what it is!
+plot1
+
+```
+
+
+```{r}
+plot2 = plot1 + aes(x=reorder(province, -ape_contrib)) + geom_hline(yintercept = mean(chw_fp$ape_contrib),
+                                                                    linetype="dashed",
+                                                                    size=1.5,
+                                                                    alpha=0.5,
+                                                                    color="red")
+
+ plot3 = plot2 + geom_hline(yintercept=10,
+                        linetype="solid",
+                        size=1,
+                        alpha=0.5,
+                        color="blue")
+ 
+ title= "Proportion of family planning users who initiated\nwith a community health organization"
+ source= "plot needs a source"
+
+plot4 = plot3 + labs(title=title,
+                     y="Percent",
+                     x="Province",
+                     caption = source)
+
+#Center the title
+#Add a legend
+
+plot4
+```
+
+
+
+```{r lolli_ord_gg, eval=FALSE}
+
+# reordering DF steps:
+chw_fp0=chw_fp[order(chw_fp$ape_contrib),]  
+
+
+base = ggplot(chw_fp0, aes(province,ape_contrib)) 
+lolliplot1=base + geom_segment(aes(y = 0, 
+                                   x = province, 
+                                   yend = ape_contrib, 
+                                   xend = province), color = "gray") 
+lolliplot2 = lolliplot1 + geom_point()
+lolliplot2 + scale_x_discrete(limits=chw_fp0$province) # key element
+```
+
+And, what about changing the axis values so that we can identify the gaps:
+
+```{r lolli_axis_gg, eval=FALSE}
+# new variable
+chw_fp0$gap=chw_fp0$ape_contrib-10
+
+# plot the new variable
+base = ggplot(chw_fp0, aes(province,gap)) 
+
+lolliplot1=base + geom_segment(aes(y = 0, 
+                                   x = province, 
+                                   yend = gap, 
+                                   xend = province), color = "gray") 
+lolliplot2 = lolliplot1 + geom_point()
+lolliplot2 + scale_x_discrete(limits=chw_fp0$province) # key element
+
+```
+
+
+Maybe add some color:
+```{r lolli_gg_color, eval=FALSE}
+# a new column for color
+chw_fp0$PositiveGap=ifelse(chw_fp0$gap>0,T,F)
+
+# add new aesthetics 'color'
+base = ggplot(chw_fp0, aes(province,gap,
+                              color=PositiveGap)) #change
+lolliplot1=base + geom_segment(aes(y = 0, 
+                                   x = province, 
+                                   yend = gap, 
+                                   xend = province), color = "gray") 
+lolliplot2 = lolliplot1 + geom_point()
+lolliplot2 + scale_x_discrete(limits=chw_fp0$province) # key element
+```
+
+
+Maybe add some extra info:
+```{r lolli_annot_gg, eval=FALSE}
+# a new column for color
+chw_fp0$PositiveGap=ifelse(chw_fp0$gap>0,T,F)
+
+base = ggplot(chw_fp0, aes(province,gap,color=PositiveGap,
+                              label = round(gap,2))) #  change
+lolliplot1=base + geom_segment(aes(y = 0, 
+                                   x = province, 
+                                   yend = gap, 
+                                   xend = province), color = "gray") 
+lolliplot2=lolliplot1 + geom_point() 
+lolliplot3= lolliplot2 + scale_x_discrete(limits=chw_fp0$province) 
+# annotating and moving the text on the horizontal
+
+lolliplot4=lolliplot3 + geom_text(nudge_x=-0.4, nudge_y=-0.1,show.legend = FALSE) 
+
+lolliplot4
+
+```
+
+
+You can avoid the overlaping symbols in the legend by using:
+```{r nudge_gg, eval=FALSE}
+lolliplot5=lolliplot4 + geom_text(nudge_x=0.4,nudge_y=-0.1,show.legend = FALSE) 
+lolliplot5
+```
+
+
+```{r add_title}
+
+title="Contribution of CHWs in Community Health Organizations in Mozambique"
+source = "Source needed"
+
+lolliplot5= lolliplot4 + labs(title=title,
+                     y="Percent Gap",
+                     x="Province",
+                     caption = source)
+
+lolliplot5
+```
+
