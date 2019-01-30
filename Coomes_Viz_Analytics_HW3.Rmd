@@ -800,6 +800,24 @@ freq(eduwa$High.Grade,style = 'rmarkdown')
 </span>
 
 
+```{r HW_3, eval=FALSE}
+
+#box2
+title="Box plot of maximum grade in WA"
+
+box3 = box2 + labs(title=title,
+                   x="",
+                   y="Grade level")
+
+box4 = box3 + theme(plot.title = element_text(hjust = 0.5),
+                    panel.background = element_rect(fill = "white"))
+
+box4
+
+```
+
+
+
 [Go to table of contents.](#part1)
 
 <a id='part32'></a>
@@ -924,6 +942,8 @@ Let's analyze the variable _Student.Teacher.Ratio_, but organized by county:
 # tapply(variable,group,functionToApply)
 tapply(eduwa$Student.Teacher.Ratio, eduwa$County, mean)
 
+# DMC - If there is one missing value, then the mean will return missing
+
 ```
 
 Above, I tried to compute the mean for each county, but the function _mean()_ outputs a missing value (_NA_) as the result when there is one _NA_ in the column:
@@ -976,7 +996,7 @@ Measurements are continuous values, then a **density** plot is more appealing to
 
 mvDense=density(meanValues)
 
-plot(mvDense,main="Title",col='black',xlab=NA)
+plot(mvDense,main="Average student to teacher ratio per county in WA",col='black',xlab=NA)
 
 abline(v=mean(meanValues),lty=3,lwd=3,col='blue') #mean
 abline(v=median(meanValues),lty=3,lwd=3,col='red')#median
