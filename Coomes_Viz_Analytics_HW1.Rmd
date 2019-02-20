@@ -1,14 +1,21 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 <br> 
 <center><img src="http://i.imgur.com/sSaOozN.png" width="500"></center>
 
 ## Course: Visual Analytics for Policy and Management
 
-### David Coomes, Homework 1
+### David Coomes, Univariate Exercises
 
 _____
 <a id='part1'></a
 
-```{r getData, eval=TRUE}
+Starting by importing the data
+
+```{r getData, include=TRUE}
 link='https://github.com/EvansDataScience/VisualAnalytics_2_tabularData/raw/master/data/eduwa.rda'
 
 #getting the data TABLE from the file in the cloud:
@@ -87,7 +94,7 @@ ToPlot*100
 
 * You can customize the colors:
 
-```{r rainbowColor, results="hide"}
+```{r rainbowColor, include=FALSE}
 # details:
 ToPlot=ToPlot*100 # preparing labels
 
@@ -119,7 +126,7 @@ library(ggplot2)
 
 * Create the base _object_, which is not a plot, just informing the main variables:
 
-```{r ggplot_base, results="hide"}
+```{r ggplot_base, include=FALSE}
 #base GGPLOT2 starts with a "base", telling WHAT VARIABLES TO PLOT
 base= ggplot(data = tableFreq, 
             aes(x = locale,
@@ -129,15 +136,14 @@ base= ggplot(data = tableFreq,
 
 * On top of the previous object, add the layer that produces the main plots (the next layers will add or customize elements in the plot):
 
-```{r bar_gg, results="hide"}
+```{r bar_gg, include=FALSE}
 plot1 = base + geom_bar(fill ="gray",
                         stat = 'identity') # y is just what it is!
 plot1
 ```
 
-* We can now pay attention to the titles:
 
-```{r title_gg, results="hide"}
+```{r title_gg, include=FALSE}
 plot2 = plot1 + labs(title=titleText2,
                      x =NULL, 
                      y = NULL,
@@ -148,7 +154,7 @@ plot2
 
 * Add the reference lines:
 
-```{r refl_gg, results="hide"}
+```{r refl_gg, include=FALSE}
 plot3 = plot2 + geom_hline(yintercept = 25, #where
                            linetype="dashed", 
                            size=1.5, #thickness
@@ -158,7 +164,7 @@ plot3
 
 * Customize the axes:
 
-```{r units_gg, results="hide"}
+```{r units_gg, include=FALSE}
 library(scales)
 
 # customize Y axis
@@ -169,7 +175,7 @@ plot4
 ```
 
 * Less ink and title/subtitle positions:
-```{r title2_gg, results="hide"}
+```{r title2_gg, include=FALSE}
 plot5 = plot4 + theme(panel.background = element_rect(fill = "white",
                                                     colour = "grey50"),
                     plot.caption = element_text(hjust = 0), # default was 1
@@ -179,7 +185,7 @@ plot5
 
 * annotating the bars:
 
-```{r annot_gg, results="hide"}
+```{r annot_gg, include=FALSE}
 
 plot6 = plot5 + geom_text(aes(
                             y = pct ,
@@ -192,46 +198,15 @@ plot6 #+ coord_flip()
 ```
 
 
-Bar plots are the default option for categorical variables. In general, you see the distribution of the classification, which allows you to identify **concentration**. For that reason, ordering the bars by height can be helpful:
-
-```{r orderBars_base, eval=FALSE}
-###
-ToPlotOrd=sort(ToPlot)
-###
-
-par(mgp=c(1,0.5,0)) # distance label, tickText,tick
-location=barplot(ToPlotOrd,
-         col = paletteHereNew,
-         border=NA,
-         main=titleText2,
-         xlim=c(0,50), 
-         xlab = '(in %)',
-         horiz = T,
-         cex.names = 0.7,
-         cex.lab=0.6,
-         xaxt="n") # no x-axis, so I customize it below...
-
-text(x=ToPlotOrd,y=location,labels=plotLabels,pos = 2,cex = 0.7) 
-title(sub=sourceText, adj=0,cex.sub=0.7,line = 3) 
-
-# reference line
-abline(v=25,lty=3,lwd=3)
-
-# customizong tick values
-xtick<-c(0,10,25,40,50)
-axis(side=1, at=xtick, labels = xtick,cex.axis=0.8)
-
-```
-
 The plot above simply change the order of the _table_. If you want to do the same with _ggplot_ you should try the command:
 
-```{r orderFor_gg, results="hide"}
+```{r orderFor_gg, include=FALSE}
 tableFreq[order(-tableFreq$pct),]
 ```
 
+Exercise 1
 
-
-```{r ggplot_new, eval=TRUE}
+```{r ggplot_new, include=TRUE}
 
 plot7=plot6 + coord_flip() + aes(x=reorder(locale, pct))
 
