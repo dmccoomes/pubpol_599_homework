@@ -6,16 +6,19 @@ output:
 <br> 
 <center><img src="http://i.imgur.com/sSaOozN.png" width="500"></center>
 
-## Course: Visual Analytics for Policy and Management
+# Course: Visual Analytics for Policy and Management
 
-### David Coomes, Univariate Exercises
+## David Coomes, Univariate Exercises
+### February 20, 2019
 
+##
+##
 _____
-<a id='part1'></a
+
 
 Starting by importing the data
 
-```{r getData, include=TRUE}
+```{r getData}
 link='https://github.com/EvansDataScience/VisualAnalytics_2_tabularData/raw/master/data/eduwa.rda'
 
 #getting the data TABLE from the file in the cloud:
@@ -35,7 +38,6 @@ absoluteT=table(eduwa$LocaleType,exclude = 'nothing')
 prop.table(absoluteT)
 ```
 
-This table tells us the location of the public schools. What is the right visual for this? Sometimes the answer seems obvious, as tradition or habits give so much weight to decisions. Let's use the very well known **pie chart**:
 
 ```{r pieBasic, include=FALSE}
 # the pie plots the table:
@@ -43,21 +45,15 @@ ToPlot=prop.table(absoluteT)
 
 ```
 
-You should always keep it simple. Then decorate. For example, you can start improving the plot you already *have*:
-
-* The purple sector does not show a label:
 
 ```{r namesFre_NA, include=FALSE}
 names(ToPlot)
 ```
 
-We could alter the fifth label:
+
 ```{r alterTable, include=FALSE}
 names(ToPlot)[5]='Unknown'
 ```
-
-
-* Our plot did not have a title. Titles (and subtitles) are important. To give a title, it can be a *question* to be answered by the plot:
 
 
 ```{r pieTitle_question, include=FALSE}
@@ -67,7 +63,6 @@ sourceText='Source: US Department of Education'
 
 ```
 
-The title can *guide* the reader to recognise the purpose of your plot:
 
 ```{r pieTitle_guide, include=FALSE}
 # the pie plots the table:
@@ -75,8 +70,6 @@ titleText2='WA still has schools locations unknown \n (info from 2018)'
 
 ```
 
-
-The title can also *suggest* the decision:
 
 ```{r pieTitle_suggestion, include=FALSE}
 # the pie plots the table:
@@ -86,13 +79,11 @@ titleText3='WA needs to fully categorize school locations\n(info from 2018)'
 
 ```
 
-* You can use the values as labels. If values between [0,1]  represent shares, it is better to use a [0,100] scale (in %).
 
 ```{r 100convert, include=FALSE}
 ToPlot*100
 ```
 
-* You can customize the colors:
 
 ```{r rainbowColor, include=FALSE}
 # details:
@@ -107,9 +98,6 @@ paletteHereNew=c('gray') # just one color
 ```
 
 
-
-* Avoid missing values and prepare frequency table. We replaced the missing values (now they are 'Unknown'). Here, you need to transform the _table_ into a **data frame**:
-
 ```{r ggplot1, include=FALSE}
 tableFreq=as.data.frame(ToPlot)
 names(tableFreq)=c("locale","pct")
@@ -118,13 +106,10 @@ tableFreq
 ```
 
 
-* Call the library:
-
 ```{r ggplot_call, include=FALSE}
 library(ggplot2)
 ```
 
-* Create the base _object_, which is not a plot, just informing the main variables:
 
 ```{r ggplot_base, include=FALSE}
 #base GGPLOT2 starts with a "base", telling WHAT VARIABLES TO PLOT
@@ -134,7 +119,6 @@ base= ggplot(data = tableFreq,
 
 ```
 
-* On top of the previous object, add the layer that produces the main plots (the next layers will add or customize elements in the plot):
 
 ```{r bar_gg, include=FALSE}
 plot1 = base + geom_bar(fill ="gray",
@@ -152,7 +136,6 @@ plot2
 
 ```
 
-* Add the reference lines:
 
 ```{r refl_gg, include=FALSE}
 plot3 = plot2 + geom_hline(yintercept = 25, #where
@@ -162,7 +145,6 @@ plot3 = plot2 + geom_hline(yintercept = 25, #where
 plot3
 ```
 
-* Customize the axes:
 
 ```{r units_gg, include=FALSE}
 library(scales)
@@ -174,7 +156,6 @@ plot4 = plot3 + scale_y_continuous(breaks=c(0,10, 25,40,50),
 plot4
 ```
 
-* Less ink and title/subtitle positions:
 ```{r title2_gg, include=FALSE}
 plot5 = plot4 + theme(panel.background = element_rect(fill = "white",
                                                     colour = "grey50"),
@@ -183,7 +164,6 @@ plot5 = plot4 + theme(panel.background = element_rect(fill = "white",
 plot5
 ```
 
-* annotating the bars:
 
 ```{r annot_gg, include=FALSE}
 
@@ -198,18 +178,19 @@ plot6 #+ coord_flip()
 ```
 
 
-The plot above simply change the order of the _table_. If you want to do the same with _ggplot_ you should try the command:
 
 ```{r orderFor_gg, include=FALSE}
 tableFreq[order(-tableFreq$pct),]
 ```
 
-Exercise 1
+
+
+
+##**Exercise 1:** Reproducing the basic plot using ggplot
 
 ```{r ggplot_new, include=TRUE}
 
 plot7=plot6 + coord_flip() + aes(x=reorder(locale, pct))
-
 plot7
 
 
