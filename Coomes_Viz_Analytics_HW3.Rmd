@@ -512,7 +512,7 @@ base= ggplot(data = tableFreq,
 ```
 
 * On top of the previous object, add the layer that produces the main plots (the next layers will add or customize elements in the plot):
-
+   
 ```{r bar_gg, eval=FALSE}
 plot1 = base + geom_bar(fill ="gray",
                         stat = 'identity') # y is just what it is!

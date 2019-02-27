@@ -128,8 +128,8 @@ plot1 = base + geom_bar(fill ="gray",
 
 
 ```{r title_gg, include=FALSE}
-plot2 = plot1 + labs(title=titleText2,
-                     x =NULL, 
+plot2 = plot1 + labs(title=titleText,
+                     x = NULL, 
                      y = NULL,
                      caption = sourceText)
 #plot2
@@ -142,7 +142,7 @@ plot3 = plot2 + geom_hline(yintercept = 25, #where
                            linetype="dashed", 
                            size=1.5, #thickness
                            alpha=0.5) #transparency
-#plot3
+plot3
 ```
 
 
@@ -152,8 +152,8 @@ library(scales)
 # customize Y axis
 plot4 = plot3 + scale_y_continuous(breaks=c(0,10, 25,40,50),
                                  limits = c(0, 50), # expand = c(0, 0),
-                                 labels=scales::unit_format(suffix = '%')) 
-#plot4
+                                 labels=scales::unit_format(suffix = "%")) 
+plot4
 ```
 
 ```{r title2_gg, include=FALSE}
@@ -174,6 +174,7 @@ plot6 = plot5 + geom_text(aes(
                         size = 3)
 # wanna flip the plot?
 #plot6 #+ coord_flip()
+
 
 ```
 
@@ -289,9 +290,16 @@ lolliplot3 + geom_text(nudge_x=0.3,show.legend = FALSE)
 <span style="color:red"> Exercise:<br>Complete adding the elements missing in the last plot. </span>
 
 
-```{r exercise_2, include=TRUE}
+```{r exercise_2, echo=TRUE}
 
+titleText = ""
 
+lolliplot4 = lolliplot3 + labs(title=titleText,
+                     x = NULL, 
+                     y = NULL,
+                     caption = sourceText)
+
+lolliplot4
 
 ```
 
