@@ -16,9 +16,12 @@ output:
 _____
 
 
-Starting by importing the data
 
-```{r getData}
+```{r getData, include=FALSE}
+
+#setting the chunk options
+knitr::opts_chunk$set(echo=FALSE)
+
 link='https://github.com/EvansDataScience/VisualAnalytics_2_tabularData/raw/master/data/eduwa.rda'
 
 #getting the data TABLE from the file in the cloud:
@@ -132,7 +135,7 @@ plot2 = plot1 + labs(title=titleText,
                      x = NULL, 
                      y = NULL,
                      caption = sourceText)
-#plot2
+plot2
 
 ```
 
@@ -161,7 +164,7 @@ plot5 = plot4 + theme(panel.background = element_rect(fill = "white",
                                                     colour = "grey50"),
                     plot.caption = element_text(hjust = 0), # default was 1
                     plot.title = element_text(hjust = 0.5))
-#plot5
+plot5
 ```
 
 
@@ -198,7 +201,6 @@ plot7
 ```
 
 
-We could use our reference line to show gaps or differences. In this case, the **Lollipop** plot may be useful. This one is just a replacement for a bar plot:
 
 ```{r lolli_gg, include=FALSE}
 base = ggplot(tableFreq, aes(x=locale,pct)) 
@@ -209,13 +211,11 @@ lolliplot1=base + geom_segment(aes(y = 0,
 lolliplot1 + geom_point()
 ```
 
-And, if you order the data frame:
-```{r lolli_ord, eval=FALSE}
+```{r lolli_ord, include=FALSE, results='hide'}
 tableFreq[order(tableFreq$pct),]
 ```
 
-You can get:
-```{r lolli_ord_gg, eval=FALSE}
+```{r lolli_ord_gg, include=FALSE}
 
 # reordering DF steps:
 tableFreqO=tableFreq[order(tableFreq$pct),]
@@ -230,9 +230,8 @@ lolliplot2 = lolliplot1 + geom_point()
 lolliplot2 + scale_x_discrete(limits=tableFreqO$locale) # key element
 ```
 
-And, what about changing the axis values so that we can identify the gaps:
 
-```{r lolli_axis_gg, eval=FALSE}
+```{r lolli_axis_gg, include=FALSE}
 # new variable
 tableFreqO$gap=tableFreqO$pct-25
 
@@ -248,8 +247,7 @@ lolliplot2 + scale_x_discrete(limits=tableFreqO$locale) # key element
 
 ```
 
-Maybe add some color:
-```{r lolli_gg_color, eval=FALSE}
+```{r lolli_gg_color, include=FALSE}
 # a new column for color
 tableFreqO$PositiveGap=ifelse(tableFreqO$gap>0,T,F)
 
@@ -264,8 +262,7 @@ lolliplot2 = lolliplot1 + geom_point()
 lolliplot2 + scale_x_discrete(limits=tableFreqO$locale) # key element
 ```
 
-Maybe add some extra info:
-```{r lolli_annot_gg, eval=FALSE}
+```{r lolli_annot_gg, include=FALSE}
 # a new column for color
 tableFreqO$PositiveGap=ifelse(tableFreqO$gap>0,T,F)
 
@@ -282,24 +279,25 @@ lolliplot3 + geom_text(nudge_x=0.3)
 
 ```
 
-You can avoid the overlaping symbols in the legend by using:
-```{r nudge_gg, eval=FALSE}
+```{r nudge_gg, include=FALSE}
 lolliplot3 + geom_text(nudge_x=0.3,show.legend = FALSE) 
 ```
 
-<span style="color:red"> Exercise:<br>Complete adding the elements missing in the last plot. </span>
+###**Exercise 2:** Complete adding the elements missing in the last plot
 
+```{r exercise_2, include=TRUE}
 
-```{r exercise_2, echo=TRUE}
-
-titleText = ""
+titleText = "Where are schools located in WA in 2019?"
 
 lolliplot4 = lolliplot3 + labs(title=titleText,
-                     x = NULL, 
-                     y = NULL,
+                     x = "Location", 
+                     y = "Gap (%)",
                      caption = sourceText)
 
-lolliplot4
+lolliplot4 + geom_text(nudge_x=0.3,show.legend = FALSE) + theme(panel.background = element_rect(fill = "white",
+                                                    colour = "grey50"),
+                    plot.caption = element_text(hjust = 0), # default was 1
+                    plot.title = element_text(hjust = 0.5))
 
 ```
 
