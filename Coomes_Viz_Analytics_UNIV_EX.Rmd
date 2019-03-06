@@ -190,7 +190,7 @@ tableFreq[order(-tableFreq$pct),]
 
 
 
-##**Exercise 1:** Reproducing the basic plot using ggplot
+#**Exercise 1:** Reproducing the basic plot using ggplot
 
 ```{r ggplot_new, include=TRUE}
 
