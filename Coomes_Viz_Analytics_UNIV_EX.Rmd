@@ -6,10 +6,10 @@ output:
 <br> 
 <center><img src="http://i.imgur.com/sSaOozN.png" width="500"></center>
 
-# Course: Visual Analytics for Policy and Management
+## Course: Visual Analytics for Policy and Management
 
-## David Coomes, Univariate Exercises
-### February 20, 2019
+### David Coomes, Univariate Exercises
+#### February 20, 2019
 
 ##
 ##
@@ -20,7 +20,7 @@ _____
 ```{r getData, include=FALSE}
 
 #setting the chunk options
-knitr::opts_chunk$set(echo=FALSE)
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE)
 
 link='https://github.com/EvansDataScience/VisualAnalytics_2_tabularData/raw/master/data/eduwa.rda'
 
@@ -190,7 +190,7 @@ tableFreq[order(-tableFreq$pct),]
 
 
 
-###**Exercise 1:** Reproducing the basic plot using ggplot
+####**Exercise 1:** Reproducing the basic plot using ggplot
 
 ```{r ggplot_new, include=TRUE}
 
@@ -283,7 +283,9 @@ lolliplot3 + geom_text(nudge_x=0.3)
 lolliplot3 + geom_text(nudge_x=0.3,show.legend = FALSE) 
 ```
 
-###**Exercise 2:** Complete adding the elements missing in the last plot
+
+
+####**Exercise 2:** Complete adding the elements missing in the last plot
 
 ```{r exercise_2, include=TRUE}
 
@@ -294,10 +296,16 @@ lolliplot4 = lolliplot3 + labs(title=titleText,
                      y = "Gap (%)",
                      caption = sourceText)
 
-lolliplot4 + geom_text(nudge_x=0.3,show.legend = FALSE) + theme(panel.background = element_rect(fill = "white",
-                                                    colour = "grey50"),
+lolliplot4 + geom_text(nudge_x=0.3,show.legend = FALSE) + theme(panel.background = element_rect(fill = "gray98",
+                                                    colour = "black"),
                     plot.caption = element_text(hjust = 0), # default was 1
-                    plot.title = element_text(hjust = 0.5))
+                    plot.title = element_text(hjust = 0.5)) +
+        
+                    geom_hline(yintercept=0,
+                               linetype="dashed",
+                               color="black",
+                               size=0.9,
+                               alpha=0.8)
 
 ```
 
@@ -334,7 +342,7 @@ levels(eduwa$High.Grade)[c(pos_q1,pos_median,pos_q3)]
 ```
 
 
-```{r advancedTable, warning=FALSE,results='asis', eval=FALSE}
+```{r advancedTable, warning=FALSE,results='asis', eval=FALSE, include=FALSE}
 #DMC adding
 #install.packages("summarytools")
 library(summarytools)
@@ -342,7 +350,7 @@ freq(eduwa$High.Grade,style = 'rmarkdown')
 ```
 
 
-###**Exercise 3:** Complete adding the elements missing in the box plot
+####**Exercise 3:** Complete adding the elements missing in the box plot
 
 
 ```{r HW_3, include=TRUE}
@@ -363,23 +371,22 @@ box4
 
 
 
-<span style="color:red"> Exercise:<br> Make a histogram for the variable  FREE LUNCH, and make sure it has all the right elements, and get rid of unnecessary elements.
-</span>
+
+####**Exercise 4:** Histogram of free lunch
 
 
-###**Exercise 4:** Histogram of free lunch
+```{r hist_freelunch, include=TRUE, echo=FALSE}
 
-
-```{r hist_freelunch, include=TRUE}
 
 dataHist=hist(eduwa$Free.Lunch)
 
-hist(eduwa$Free.Lunch, labels=T, xlab="Free Lunch", xaxt="n")
-axis(side=1, at=dataHist$breaks) # showing axis labels better
+#hist(eduwa$Free.Lunch, labels=T, xlab="Free Lunch", xaxt="n")
+#axis(side=1, at=dataHist$breaks) # showing axis labels better
 
 
 ```
 
+<!-- commenting this chunk out - i don't think we need it
 
 Let's analyze the variable _Student.Teacher.Ratio_, but organized by county:
 
@@ -464,7 +471,7 @@ bp$out
 ```
 
 We could annotate the boxplot like this:
-```{r boxplt_annotate, eval=FALSE}
+```{r boxplt_annotate, include=FALSE}
 
 boxplot(meanValues,horizontal = T,ylim=c(5,30))
 text(x= 10, y= 0.8, labels= "Outliers are:",col='gray')
@@ -481,14 +488,71 @@ From what I said above, the subjective side of finding outliers lies in the deci
 </span>
 
 
-```{r hist_freelunch, include=TRUE}
+-->
 
-dataHist=hist(eduwa4$Student.Teacher.Ratio)
+<!--Cleaning the data to better represent the distribution -->
 
-hist(eduwa4$Student.Teacher.Ratio, labels=T, xlab="Free Lunch", xaxt="n")
-axis(side=1, at=dataHist$breaks) # showing axis labels better
-
+```{r data_cleaning, include=FALSE, eval=FALSE}
+#install.packages("Hmisc")
+#library(Hmisc)
+#I don't think that the upper and lower ratios are accurate - replacing those over the 95th percentile with the median
+describe(eduwa4$Student.Teacher.Ratio)
+#eduwa4$Student.Teacher.Ratio[eduwa4$Student.Teacher.Ratio>26.1] <- 18.3
+#eduwa4$Student.Teacher.Ratio[eduwa4$Student.Teacher.Ratio<11.0] <- 18.3
 
 ```
+
+####**Exercise 5**: Histogram and density plot of student to teacher ratio
+
+
+Constructing a histogram using ggplot
+
+```{r histogram_ggplot, include=TRUE, warning=FALSE}
+
+hist_title="Histogram of student to teacher ratio in WA"
+
+base = ggplot(data=eduwa4, aes(Student.Teacher.Ratio))
+
+hist1 = base + geom_histogram(breaks=seq(10, 30, by=1),
+                              col="darkblue",
+                              fill="blue",
+                              alpha=.2) + 
+              labs(title=hist_title, x="Student Teacher Ratio", y="Count") +
+              xlim(c(8,30)) + ylim(c(0, 400)) +
+  
+              theme(panel.grid.minor=element_blank(),
+                    panel.background=element_rect(fill="gray98"),
+                    plot.title=element_text(hjust=0.5))
+  
+hist1
+
+```
+
+
+Using ggplot to create a density plot
+
+```{r density_plot, include=TRUE, warning=FALSE}
+
+dp_title="Density plot of student to teacher ratio in WA"
+
+base = ggplot(eduwa4, aes(x=eduwa4$Student.Teacher.Ratio)) 
+
+density1 = base + geom_vline(aes(xintercept=mean(eduwa4$Student.Teacher.Ratio)),
+                                              color="blue", linetype="dashed", size=1)  + 
+                  geom_density(color="darkblue", fill="lightblue", alpha=0.2) +
+  
+                   labs(title=dp_title, x="Student Teacher Ratio", y="Density") +
+                     xlim(c(5,35)) + ylim(c(0, 0.20)) +
+  
+                 theme(panel.grid.minor=element_blank(),
+                       #panel.grid.major=element_blank(),
+                       panel.backgroun=element_rect(fill="gray98"),
+                    plot.title=element_text(hjust=0.5))
+               
+
+density1
+```
+
+
 
 
