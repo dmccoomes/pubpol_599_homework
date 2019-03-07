@@ -139,6 +139,7 @@ bars2 = bars1 + facet_wrap( ~ Daytime ,nrow = 1)
 bars2 + coord_flip() + theme(axis.text.y = element_text(size=4,angle = 45)) 
 ```
 
+_____
 
 ####**Exercise 1:** Creating lolliplot
 
@@ -183,6 +184,8 @@ heat4 = heat3 + theme(axis.text.x = element_text(angle = 90, vjust = 0.6),
 heat4 + labs(y="Crime")
 ```
 
+<br>
+<br>
 _____
 
 ####**Exercise 2:** Change heat plot to ascending order
@@ -209,24 +212,24 @@ heat4 + labs(y="Crime")
 ```
 
 
-
+<!--DMC don't need from here...
 In the previous data set we had a variable that informs the amount of days it takes someone to report a crime:
 
-```{r summaryTime, eval=FALSE}
+```{r summaryTime}
 summary(crime$DaysToReport)
 ```
 
 
 There are several good categorical variables that can be used to study the behavior of this one. Let's use _precint_:
 
-```{r tapply, eval=FALSE}
+```{r tapply}
 tapply(crime$DaysToReport,crime$Precinct,mean)
 ```
 
 
 Above, you see the mean time (in days) it takes per precint for people to notify a crime. You can suddenly create a plot in your mind just by reading those values, but the plot you imagine may be far from this one:
 
-```{r,boxNumCat1, eval=FALSE}
+```{r,boxNumCat1}
 boxplot(DaysToReport~Precinct,data=crime)
 ```
 
@@ -266,51 +269,44 @@ Up to this point, you need to be planing a good _story_. The situation is differ
 
 First, let's see how many cases we have per precinct:
 
-```{r crimeTapply, eval=FALSE}
+ DMC - maybe to here? -->
+
+
+```{r crimeTapply}
 crimeYear=crime[crime$DaysToReport>=365,]
 tapply(crimeYear$DaysToReport,crimeYear$Precinct,length)
 ```
 
-The year the crime occurred would be another variable to consider, to see if we can filter more cases:
 
-```{r casesTapplycount, eval=FALSE}
+```{r casesTapplycount}
 tapply(crimeYear$DaysToReport,crimeYear$year,length)
 ```
 
-If we were to plot by year, several years before 2000 are too few (cases with two or less may require a case study-  some might even be typing mistakes). Let's get rid of those old cases:
 
-```{r crimeAfter2000, eval=FALSE}
+```{r crimeAfter2000}
 crimeY2000=crime[(crime$DaysToReport>=365) & (crime$year>=2000),]
 tapply(crimeY2000$DaysToReport,crimeY2000$Precinct,length)
 ```
-
-Now, we see a better boxplot:
-```{r boxpAfter2000, eval=FALSE}
+```{r boxpAfter2000}
 boxplot(DaysToReport~Precinct,data=crimeY2000,
         main="One year or more (from 2000)")
 ```
 
-For sure, it would be better if the numerical units  were in years:
 
-```{r convertYear, eval=FALSE}
+```{r convertYear}
 crimeY2000$YearsToReport=crimeY2000$DaysToReport/365
 boxplot(YearsToReport~Precinct,data=crimeY2000,
         main="One year or more (from 2000)")
 ```
 
-This is a good data subset, but you still see that the distribution is pretty similar in every precint. At this stage, you can try visualizing the outliers distributions, which start around year five:
 
-```{r yearsGT5, eval=FALSE}
+```{r yearsGT5}
 boxplot(YearsToReport~Precinct,data=crimeY2000,subset = YearsToReport>=5,
         main="Five years or more (from 2000)")
 ```
 
-If your story is about the similarity of distributions among precincts, you can start improving the last plots. But in case you need to show some variety you can try another relevant categorical variable.
 
-Let's try _weekday_ and _Ocurred.DayTime_:
-
-
-```{r exploreCatBOX, eval=FALSE}
+```{r exploreCatBOX}
 
 par(mfrow=c(2,1))
 
@@ -322,9 +318,8 @@ boxplot(YearsToReport~Occurred.DayTime,data=crimeY2000,
 
 ```
 
-Not much variety is perceived; then let's try _crimecat_ and _year_:
 
-```{r exploreBOX2, eval=FALSE}
+```{r exploreBOX2}
 par(mfrow=c(2,1))
 
 boxplot(YearsToReport~year,data=crimeY2000,
@@ -334,8 +329,7 @@ boxplot(YearsToReport~crimecat,data=crimeY2000,
         main="One year or more (from 2000)",las=2)
 ```
 
-Years to report seems interesting, you have a decreasing tendency, then we can spend some time improving it via ggplot:
-```{r yearsToRep, eval=FALSE}
+```{r yearsToRep}
 # no missing:
 crimeYearGG=crimeY2000[complete.cases(crimeY2000$YearsToReport),]
 
@@ -344,9 +338,7 @@ box  = base + geom_boxplot()
 box
 ```
 
-It may be the case that your audience does not know how to read a boxplot. It is a great plot, but encoding so much statistical information. Then we can go simple, and use lines connecting the easy-to-understand points in every boxplot:
-
-```{r boxBYE, eval=FALSE}
+```{r boxBYE}
 
 base  = ggplot(crimeYearGG,aes(x=factor(year), y=YearsToReport))
 mins = base + stat_summary(fun.y=min, # function for 'y' is min()
@@ -357,9 +349,8 @@ mins # just the min values
 
 ```
 
-Let me add the max values:
 
-```{r, eval=FALSE}
+```{r}
 minsMaxs= mins + stat_summary(fun.y=max,
                               geom="line",
                               linetype='dashed',
@@ -370,18 +361,16 @@ minsMaxs
 
 ```
 
-Adding the median:
 
-```{r, eval=FALSE}
+```{r}
 minsMaxsMd= minsMaxs + stat_summary(fun.y=median,
                                     geom="line",size=2,
                                     aes(group=1,col='Median'))
 minsMaxsMd
 ```
 
-Let's take control of the colors by customizing the legend:
 
-```{r, eval=FALSE}
+```{r}
 # Change color of lines:
 all1=minsMaxsMd + scale_colour_manual(name="Trends",
                                       values=c("blue", "black","red")
@@ -390,9 +379,8 @@ all1
 ```
 
 
-Now, let's complete the story by telling how the data filtered behaves, that is, the crimes that took less than a year to report since 2000 (we will not include data from before):
 
-```{r crimeWeek, eval=FALSE}
+```{r crimeWeek}
 # data preparation:
 
 crimeWeek=crime[(crime$DaysToReport<365) & (crime$year>=2000),]
@@ -404,7 +392,7 @@ crimeYearGG2=crimeWeek[complete.cases(crimeWeek$WeeksToReport) &complete.cases(c
 
 ```
 
-```{r plotCrimeWeek, eval=FALSE}
+```{r plotCrimeWeek}
 #plotting it:
 base = ggplot(crimeYearGG2,aes(x=factor(year), y=WeeksToReport)) 
 mins = base + stat_summary(fun.y=min,size=1,
@@ -422,9 +410,15 @@ all2=minsMaxsMd + scale_colour_manual(name="Trends",
 all2 
 ```
 
-We also found variability in the type of crime, so we could try a story with it; first with Years to report (for crimes that took a year or longer to report, after year 2000):
+<br>
+<br>
 
-```{r byCrime, eval=FALSE}
+_____
+
+####**Exercise 3:** Completing the information for the plots
+
+
+```{r byCrime, include=TRUE}
 base= ggplot(crimeYearGG,
              aes(x = reorder(crimecat, YearsToReport, FUN = max), # reorder!
                  y=YearsToReport)) 
@@ -439,12 +433,23 @@ minsMaxsMd= minsMaxs + stat_summary(fun.y=median, size=2,
                                     aes(group=1,col='Median'))
 all3=minsMaxsMd + scale_colour_manual(name="Trends",
                                       values=c("blue", "black","red"))
-all3 + coord_flip()
+
+all3 + coord_flip() + labs(title=expression(atop("Years to report a crime for crimes that took longer", paste("than one year to report"))),
+                           x="Crime", y="Time to report (years)") +
+  
+                          theme(panel.grid.minor=element_blank(),
+                              panel.backgroun=element_rect(fill="gray98"),
+                              plot.title=element_text(hjust=0.5))
+  
+  
+  
+  
+  
 ```
 
-Now, for crimes that took less than  year to report after year 2000:
+<br>
 
-```{r byCrime2, eval=FALSE}
+```{r byCrime2, include=TRUE}
 base = ggplot(crimeYearGG2,
               aes(x = reorder(crimecat, WeeksToReport, FUN = max),
                   y=WeeksToReport)) 
@@ -459,12 +464,160 @@ minsMaxsMd= minsMaxs + stat_summary(fun.y=median,size=2,
                                     aes(group=2,col='Median'))
 all3=minsMaxsMd + scale_colour_manual(name="Trends",
                                       values=c("blue", "black","red"))
-all3+coord_flip()
+
+
+all3+coord_flip() + labs(title=expression(atop("Weeks to report a crime for crimes that took less", paste("than one year to report"))),
+                           x="Crime", y="Time to report (years)") +
+  
+                          theme(panel.grid.minor=element_blank(),
+                              panel.backgroun=element_rect(fill="gray98"),
+                              plot.title=element_text(hjust=0.5))
+
+
+
 ```
 
-<a id='ex3'></a>
-<span style="color:red"> Exercise 3:<br> Complete the information needed in the previous plots.
-</span>
+
+
+
+```{r aggregate}
+# 1. MEAN of days it takes to report a crime by neighborhood
+daysByNeigh=tapply(crime$DaysToReport, crime$Neighborhood, mean,na.rm=T)
+
+# you have:
+head(daysByNeigh)
+```
+
+```{r}
+# 2. PROPORTION of crimes by neighborhood
+crimesByNeigh=tapply(crime$crimecat, crime$Neighborhood, length)%>%      
+                     prop.table()%>%
+                     "*"(100)%>% 
+                     round(2) 
+head(crimesByNeigh)
+```
+
+
+```{r}
+library(tibble)
+as.data.frame(daysByNeigh)%>%rownames_to_column()
+```
+
+
+```{r TOdataFrame}
+daysByNeigh=as.data.frame(daysByNeigh)%>%rownames_to_column()
+crimesByNeigh=as.data.frame(crimesByNeigh)%>%rownames_to_column()
+```
+
+
+```{r mergeDFS}
+num_num=merge(daysByNeigh,crimesByNeigh) # 'row name' is the "key"
+head(num_num)
+```
+
+
+
+```{r scatter}
+base = ggplot(num_num, aes(daysByNeigh,crimesByNeigh)) 
+plot1= base +  geom_point() 
+plot1
+```
+
+
+```{r ggscatter}
+library(ggrepel)
+base = ggplot(num_num, aes(daysByNeigh,crimesByNeigh,
+                           label=rowname)) # you need this aesthetics!
+plot1= base +  geom_point() 
+plot1 + geom_text_repel()
+```
+
+<br>
+<br>
+
+_____
+
+####**Exercise 4:** Completing the information for the scatter plot and density plot
+
+
+```{r scatter_plot, include=TRUE}
+base = ggplot(num_num, aes(daysByNeigh,crimesByNeigh,label=rowname)) 
+plot1= base +  geom_point() 
+
+scat_title="Scatter plot of days to report crime by neighborhood in Seattle"
+cap_title="*Only neighborhoods that account for at least 5% of all crimes in Seattle are listed by name"
+
+plot1 + geom_text_repel(aes(label=ifelse(crimesByNeigh>=5,
+                                         num_num$rowname, ""))) +
+  
+        labs(title=scat_title, caption=cap_title, x="Days to report crime", y="Density") +
+  
+        theme(plot.title=element_text(hjust=0.5),
+              plot.caption=element_text(hjust=0)) 
+
+
+
+
+```
+
+
+<br>
+
+```{r simpleScatter}
+base = ggplot(num_num, aes(daysByNeigh,crimesByNeigh)) 
+scatp1 = base +  geom_point() 
+scatp1 + geom_text(aes(label=ifelse(crimesByNeigh>=5,num_num$rowname, "")))
+```
+
+
+
+```{r scatterSEARCH}
+base = ggplot(num_num, aes(daysByNeigh,crimesByNeigh,label=rowname)) 
+base +  geom_point() + geom_text_repel(aes(label=ifelse(num_num$rowname=='NORTHGATE',
+                                                        num_num$rowname, "")))
+```
+
+
+```{r hexbins}
+base = ggplot(num_num, aes(daysByNeigh,crimesByNeigh)) 
+scatp1 = base +  geom_hex(bins = 10)
+scatp2= scatp1 + geom_text_repel(aes(label=ifelse(crimesByNeigh>=5,
+                                                  num_num$rowname,
+                                                  ""))) 
+scatp2 + scale_fill_distiller(palette ="Greys",direction=1) # try -1
+```
+
+
+```{r density}
+base = ggplot(num_num, aes(daysByNeigh,crimesByNeigh)) 
+scatp1 = base +  stat_density_2d(aes(fill = ..density..), 
+                                 geom = "raster", contour = FALSE)
+scatp2=scatp1+geom_text_repel(aes(label=ifelse(crimesByNeigh>=5,
+                                               num_num$rowname, "")))
+scatp3 = scatp2 +  theme(legend.position='none') 
+scatp4= scatp3 + scale_fill_distiller(palette="Reds", direction=1) 
+scatp4
+```
+
+```{r, density_plot, include=TRUE}
+scatp5 = scatp4 +  scale_x_continuous(expand = c(0, 0)) + 
+         scale_y_continuous(expand = c(0, 0)) 
+
+dens_title="Density plot of days to report crime by neighborhood in Seattle"
+dens_caption="*Listed neighborhoods each account for at least 5% of crimes in Seattle"
+
+scatp5 + labs(title=dens_title, 
+              caption=dens_caption, 
+              x="Days to report", 
+              y="Density") +
+  
+        theme(plot.title=element_text(hjust=0.5),
+              plot.caption=element_text(hjust=0)) 
+  
+        
+  
+```
+
 
 
 
